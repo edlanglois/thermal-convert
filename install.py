@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import shutil
 import subprocess
 import sys
@@ -115,7 +116,7 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
     if not args.force_install_exiftool:
         if sys.platform == "win32":
             # Prevent the CWD from being included in the search path
-            sys.environ["NoDefaultCurrentDirectoryInExePath"] = "1"
+            os.environ["NoDefaultCurrentDirectoryInExePath"] = "1"
         exiftool = shutil.which("exiftool")
 
     if exiftool is not None:
