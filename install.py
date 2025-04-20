@@ -188,22 +188,21 @@ def install_exiftool_windows(dest: Path, version: str) -> None:
         _ = urllib.request.urlretrieve(url, filepath)
         print(f"Downloaded to {filepath}")
 
-        zfile = ZipFile(filepath)
+        with ZipFile(filepath) as zfile:
+            print(f"Extracting inside {tempdir}")
+            zfile.extractall(tempdir)
 
-        print(f"Extracting inside {tempdir}")
-        zfile.extractall(tempdir)
+            dest_exe = dest / "exiftool.exe"
+            print(f"Installing {dest_exe}")
+            shutil.copy2(tempdir / basename / "exiftool(-k).exe", dest_exe)
 
-        dest_exe = dest / "exiftool.exe"
-        print(f"Installing {dest_exe}")
-        shutil.copy2(tempdir / basename / "exiftool(-k).exe", dest_exe)
-
-        dest_files = dest / "exiftool_files"
-        print(f"Installing {dest_files}")
-        shutil.copytree(
-            tempdir / basename / "exiftool_files",
-            dest_files,
-            dirs_exist_ok=True,
-        )
+            dest_files = dest / "exiftool_files"
+            print(f"Installing {dest_files}")
+            shutil.copytree(
+                tempdir / basename / "exiftool_files",
+                dest_files,
+                dirs_exist_ok=True,
+            )
 
 
 def shebang_linux(path: Path) -> str:
