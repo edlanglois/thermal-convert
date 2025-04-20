@@ -1,0 +1,6 @@
+git+https://github.com/edlanglois/thermal_base.git@main
+gooey
+imagecodecs
+numpy
+requests
+tifffile
