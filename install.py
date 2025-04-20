@@ -25,7 +25,6 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser(
         description=__doc__.splitlines()[0] if __doc__ else None,
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
         "--source-dir",
@@ -193,12 +192,4 @@ def install_exiftool_windows(dest: Path, version: str) -> None:
 
 
 if __name__ == "__main__":
-    try:
-        _np = sys.modules["numpy"]
-    except KeyError:
-        pass
-    else:
-        _np.set_printoptions(  # type: ignore
-            linewidth=shutil.get_terminal_size().columns
-        )
     main()
