@@ -35,7 +35,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         "--install-dir",
         type=Path,
-        default=Path(__file__).parent,
+        default=Path(__file__).parent / "install",
         help="base install directory",
     )
     parser.add_argument(
@@ -142,10 +142,10 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
         check=True,
     )
 
-    scripts = ["src/thermal-convert.py"]
-    for scriptname in scripts:
-        src_path = source_dir / scriptname
-        dest_path = install_dir / scriptname
+    scripts = [Path("src/thermal-convert.py")]
+    for script in scripts:
+        src_path = source_dir / script
+        dest_path = install_dir / script.name
         print(f"Installing {dest_path}")
         if not (dest_path.exists() and src_path.samefile(dest_path)):
             shutil.copy2(src_path, dest_path)
@@ -159,6 +159,14 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
         print(f"Replacing shebang with {lines[0]}", end="")
         with open(dest_path, "w") as f:
             f.writelines(lines)
+
+    print(f"Creating default input & output directories in {install_dir}")
+    install_input = install_dir / "input"
+    install_input.mkdir(exist_ok=True)
+    install_output = install_dir / "output"
+    install_output.mkdir(exist_ok=True)
+
+    print(f"Done installing to {install_dir}")
 
 
 def install_exiftool_windows(dest: Path, version: str) -> None:

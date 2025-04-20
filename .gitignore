@@ -1,8 +1,1 @@
-dji_executables/
-input/
-output/
-
-exiftool.exe
-exiftool_files/
-
-venv/
+/install/
