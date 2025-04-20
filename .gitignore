@@ -4,3 +4,5 @@ output/
 
 exiftool.exe
 exiftool_files/
+
+venv/
