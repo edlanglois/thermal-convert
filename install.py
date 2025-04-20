@@ -142,8 +142,8 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
         check=True,
     )
 
-    scriptnames = ["thermal-convert.py"]
-    for scriptname in scriptnames:
+    scripts = ["src/thermal-convert.py"]
+    for scriptname in scripts:
         src_path = source_dir / scriptname
         dest_path = install_dir / scriptname
         print(f"Installing {dest_path}")
