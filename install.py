@@ -142,6 +142,11 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
         check=True,
     )
 
+    if sys.platform == "win32":
+        python_shebang = shebang_windows(venv_python_bin)
+    else:
+        python_shebang = shebang_linux(venv_python_bin)
+
     scripts = [Path("src/thermal-convert.py")]
     for script in scripts:
         src_path = source_dir / script
@@ -150,12 +155,13 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
         if not (dest_path.exists() and src_path.samefile(dest_path)):
             shutil.copy2(src_path, dest_path)
         # Replace shebang lines
-        with open(dest_path, "r") as f:
-            lines = f.readlines()
-            if lines and lines[0].startswith("#!"):
-                lines[0] = f"#!{venv_python_bin}\n"
-            else:
-                continue
+        if dest_path.suffix == ".py":
+            with open(dest_path, "r") as f:
+                lines = f.readlines()
+                if lines and lines[0].startswith("#!"):
+                    lines[0] = python_shebang
+                else:
+                    continue
         print(f"Replacing shebang with {lines[0]}", end="")
         with open(dest_path, "w") as f:
             f.writelines(lines)
@@ -197,6 +203,19 @@ def install_exiftool_windows(dest: Path, version: str) -> None:
             dest_files,
             dirs_exist_ok=True,
         )
+
+
+def shebang_linux(path: Path) -> str:
+    path_str = str(path)
+    if " " in path_str:
+        raise ValueError(
+            f"Virtual environment path cannot contain spaces: {path}"
+        )
+    return f"#!{path}\n"
+
+
+def shebang_windows(path: Path) -> str:
+    return f'#!"{path}"\n'
 
 
 if __name__ == "__main__":

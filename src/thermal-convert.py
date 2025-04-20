@@ -48,22 +48,48 @@ def parse_args(
     Returns:
         An `argparse.Namespace` object containing the parsed arguments.
     """
+    # Gooey breaks if the file path has spaces
+    # Add a custom validator that tells the user to manually quote
+    # https://github.com/chriskiehl/Gooey/issues/301
+    gooey_options = {
+        "validator": {
+            "test": " or ".join(
+                [
+                    'not re.findall(r"\\s", user_input)',
+                    "re.findall(r\"^\\'[^\\\"\\']+\\'$\", user_input)",
+                    're.findall(r"^\\"[^\\"\\\']+\\"$", user_input)',
+                ]
+            ),
+            "message": (
+                "Input contains spaces and must be manually surrounded "
+                "by quotation marks"
+            ),
+        }
+    }
+    # Avoid spaces in default
+    if " " in str(Path.cwd()):
+        cwd = Path()
+    else:
+        cwd = Path.cwd()
+
     parser = GooeyParser(
         description=__doc__.splitlines()[0] if __doc__ else None,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
         "input",
-        default=str(Path.cwd() / "input"),
+        default=str(cwd / "input"),
         nargs="?",
         widget="DirChooser",
+        gooey_options=gooey_options,
         help="input directory",
     )
     parser.add_argument(
         "output",
-        default=str(Path.cwd() / "output"),
+        default=str(cwd / "output"),
         nargs="?",
         widget="DirChooser",
+        gooey_options=gooey_options,
         help="output directory",
     )
     parser.add_argument(
