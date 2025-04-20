@@ -139,6 +139,10 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
         argv: A list of argument strings to use instead of sys.argv.
     """
     args = parse_args(argv)
+    # Unfortunately Gooey inverts `store_false` options
+    args.copy_exif = not args.copy_exif
+    for k, v in vars(args).items():
+        logger.debug("arg %s: %r", k, v)
 
     in_dir = Path(args.input)
     in_files = [f for f in in_dir.iterdir() if f.is_file()]
